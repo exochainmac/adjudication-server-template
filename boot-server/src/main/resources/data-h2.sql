@@ -1,0 +1,1 @@
+MERGE INTO LOGIN_CHANNEL (id, title, description) VALUES ('901a22c4-bb6f-467f-a802-1d1da994814', 'BCC1', 'Blue Cloud')

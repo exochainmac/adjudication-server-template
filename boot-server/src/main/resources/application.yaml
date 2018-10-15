@@ -1,0 +1,193 @@
+server:
+  port: 8080
+  compression:
+    enabled: true
+  tomcat:
+    #TODO: Set up basedir later for production usage
+    basedir: ./
+    accesslog:
+      enabled: true
+
+spring:
+  profiles:
+    # Force these to be the active profiles for now
+    active: dev
+  expression:
+    compiler:
+      mode: IMMEDIATE
+  session:
+    store-type: none
+
+# We configure the core logging formats etc. here in the global profile.
+# NOTE: Configure logging levels etc. in other profiles like dev,stg,prd and NOT here
+logging:
+  # ONLY use the file name prefix because we add suffixes in our appenders
+  file: logs/server
+  pattern:
+    # ONLY use the following patterns for debugging in dev because they are EXPENSIVE due to populating caller info!!!
+    console: "%clr(%d{${LOG_DATEFORMAT_PATTERN:yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) %clr(${PID: }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}:%L %M){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}}"
+    file: "%d{${LOG_DATEFORMAT_PATTERN:yyyy-MM-dd HH:mm:ss.SSS}} ${LOG_LEVEL_PATTERN:%5p} ${PID: } --- [%t] %-40.40logger{39}:%L-%M : %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
+
+# Database migration
+flyway:
+  # DISABLE Flyway auto-migrations for now because we haven't coded them up yet.
+  enabled: false
+
+---
+spring:
+  profiles: dev
+  session:
+    # DISABLE distributed spring sessions for now in dev because we don't have infrastructure
+    store-type: none
+    jdbc:
+      table-name: SPRING_SESSION
+logging:
+  level:
+    com:
+      exochain: TRACE
+    org:
+      hibernate:
+        SQL: INFO
+
+# Spring security settings for dev -- not sure if we will need spring security in BC API yet
+# just pasted in from exo-www for now
+security:
+  user:
+    name: user
+    password: password
+    role: EXAMPLE
+
+clients:
+  bluecloud:
+    exoApiUrl: http://localhost:8080/bc2f
+    exoJwtAudience: http://localhost:8080/bc2f
+    exoJwtExpirationSecs: 300
+    clientPostbackUrl: http://localhost:8082/bcreceive
+    clientIssuer: https://www.bluecloud.net
+    clientAudience: https://www.bluecloud.net
+    publicKeysLocation: blue-cloud-public-dev
+    privateKeysLocation: exochain-private-dev
+
+apersona:
+  licenseKey: ExC-BCP-87gw36qx39pt14
+  baseUrl: https://asm2.apersona.com:8443/asm
+  authenticateSuffix: extAuthenticate.kv
+  verifyOtpSuffix: extVerifyOtp.kv
+  resendOtpSuffix: extResendOtp.kv
+  removeUserSuffix: extRemoveUser.kv
+  exoWebHost: http://localhost:8080/bc2f
+
+---
+# This profile is only for setting up a local embedded MySQL compatible
+# (mariadb) instance.  It has only been tested on Linux.
+spring:
+  profiles: mariadb4j
+  datasource:
+    username: testdbuser
+    password: testpassword
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3900/testdb
+
+mariaDB4j:
+  dataDir: /tmp/mariadb
+  port: 3900
+
+# Auto flyway is disabled because we manage Flyway manually in code
+flyway:
+  enabled: false
+primarydb:
+  datasource:
+    username: testdbuser
+    password: testpassword
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3900/testdb
+  flyway:
+    locations: db/migration/primary/mysql
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL57Dialect
+        implicit_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+        physical_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+        id:
+          new_generator_mappings: false
+eventsdb:
+  datasource:
+    username: testdbuser
+    password: testpassword
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3900/testdbevt
+  flyway:
+    locations: db/migration/events/mysql
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL57Dialect
+        implicit_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+        physical_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+        id:
+          new_generator_mappings: false
+
+---
+# For temporarily disabling Spring HTTP security stuff so that core functionality can be more easily tested
+spring:
+  profiles: nosecurity
+management:
+  security:
+    enabled: false
+security:
+  ignored: /**
+
+---
+# For embedded h2 database testing
+spring:
+  profiles: h2db
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        trace: true
+  jpa:
+    hibernate:
+      ddl-auto: none
+      use-new-id-generator-mappings: false
+
+
+# Flyway is disabled because we control Flyway in code
+flyway:
+  enabled: false
+primarydb:
+  datasource:
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE
+  flyway:
+    locations: db/migration/primary/h2
+    out-of-order: true
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        implicit_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+        physical_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+        id:
+          new_generator_mappings: false
+eventsdb:
+  datasource:
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE
+  flyway:
+    locations: db/migration/events/h2
+    out-of-order: true
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        implicit_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+        physical_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+        id:
+          new_generator_mappings: false
