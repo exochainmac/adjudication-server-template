@@ -1,1 +1,0 @@
-# adjudication-server-template

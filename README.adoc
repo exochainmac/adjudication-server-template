@@ -1,0 +1,68 @@
+# Blue Cloud API Implementation
+
+## Project Setup
+
+We do not have a company maven repository yet so you will need to install all
+custom (internal company, GDPR, etc.) dependencies by checking out the source
+of any internal modules, changing into their root, and running:
+
+    mvn clean install
+
+This will put them in your local maven repo cache on your machine.
+
+### Axon GDPR encryption
+
+We use a licensed Axon library that has to be installed locally in your machine
+in order for the build to work.  There are shell scripts (and windows .cmd)
+scripts provided to install them locally.  Here are the commands:
+
+Install Axon GDPR core support:
+
+    # From the project root directory
+    cd axon-gdpr-distrib/versions/core
+    ./install.sh # or run the cmd
+
+Install Axon 3 support:
+
+    # From the project root directory
+    cd axon-gdpr-distrib/versions/axon3
+    ./install.sh # or run the cmd
+
+## Bulding the project
+
+The project must build and run on the Linux command line.  From the root project directory:
+
+    mvn clean install
+    # OR
+    mvn -P mariadb4j clean install
+
+### Database support
+
+We currently have support for two embedded databases in order to ease testing:  mariadb and h2.
+
+To enable build support for mariadb you must use the maven profile "mariadb4j" e.g.
+
+    # From the root directory
+    mvn -P mariadb4j clean install
+
+## Running the project
+
+You must activate the appropriate spring profiles during the run command to select the database
+config to use and other properties.  For example, from the root directory (after building the
+project) execute:
+
+    java -Dspring.profiles.active=<comma separated list of profiles> -jar boot-server/target/bc-api-server-0.0.1-SNAPSHOT.jar
+
+The profiles are described below:
+
+. dev - basic common dev settings
+. h2db - use the embedded H2 database
+. mariadb4j - use the embedded mariadb4j database
+. nosecurity - disable API security (to ease some testing)
+. internal - to enable a testing controller that lets you issue some commands to create data etc.
+
+So to run the program in dev mode with mariadb4j database, disabled API security, and be able to hit the test controller:
+
+    # Note: must have been compiled with the "mariadb4j" maven profile
+    java -Dspring.profiles.active=dev,mariadb4j,nosecurity,internal -jar boot-server/target/bc-api-server-0.0.1-SNAPSHOT.jar
+
