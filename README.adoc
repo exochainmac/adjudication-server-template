@@ -1,4 +1,4 @@
-# Blue Cloud API Implementation
+# Adjudication API Server
 
 ## Project Setup
 
@@ -51,7 +51,7 @@ You must activate the appropriate spring profiles during the run command to sele
 config to use and other properties.  For example, from the root directory (after building the
 project) execute:
 
-    java -Dspring.profiles.active=<comma separated list of profiles> -jar boot-server/target/bc-api-server-0.0.1-SNAPSHOT.jar
+    java -Dspring.profiles.active=<comma separated list of profiles> -jar boot-server/target/adjudication-api-server-0.0.1-SNAPSHOT.jar
 
 The profiles are described below:
 
