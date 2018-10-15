@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>io.axoniq</groupId>
+    <artifactId>axoniq-gdpr-axon3</artifactId>
+    <version>1.2</version>
+    <packaging>jar</packaging>
+    <properties>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <axon.version>3.0.7</axon.version>
+        <scala.version>2.12.4</scala.version>
+        <scala.compat.version>2.12</scala.compat.version>
+        <scala.plugin.version>2.15.2</scala.plugin.version>
+        <okhttp.version>3.10.0</okhttp.version>
+    </properties>
+	<dependencies>
+        <dependency>
+            <groupId>org.axonframework</groupId>
+            <artifactId>axon-core</artifactId>
+            <version>${axon.version}</version>
+            <!--
+              This version of the GDPR Module needs an axon-core version of the same major version as the one
+              referenced above. The dependency is 'optional' to avoid the GDPR Module from overriding an
+              Axon version determined elsewhere.
+            -->
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${scala.version}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>${okhttp.version}</version>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+</project>

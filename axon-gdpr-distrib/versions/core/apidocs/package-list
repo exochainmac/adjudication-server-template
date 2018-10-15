@@ -1,0 +1,8 @@
+io.axoniq.gdpr.api
+io.axoniq.gdpr.cryptoengine
+io.axoniq.gdpr.cryptoengine.jpa
+io.axoniq.gdpr.cryptoengine.vault
+io.axoniq.gdpr.serialization
+io.axoniq.gdpr.serialization.converters
+io.axoniq.gdpr.serialization.json
+io.axoniq.gdpr.serialization.xml

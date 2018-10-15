@@ -1,0 +1,4 @@
+io.axoniq.gdpr.api
+io.axoniq.gdpr.cryptoengine
+io.axoniq.gdpr.cryptoengine.jpa
+io.axoniq.gdpr.cryptoengine.vault
